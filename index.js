@@ -19,6 +19,16 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+let addClientData = (req, res, next) => {
+  req.clientData = {};
+  req.clientData.ipaddress = req.header('x-forwarded-for') || req.socket.remoteAddress;
+  req.clientData.language = req.header('accept-language');
+  req.clientData.software = req.header('user-agent');
+  next();
+}
+
+app.use('/api/whoami', addClientData);
+
 // your first API endpoint...
 app.get('/api/hello', function (req, res) {
   res.json({ greeting: 'hello API' });
